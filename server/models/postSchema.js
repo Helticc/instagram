@@ -1,13 +1,15 @@
 const { Schema, mongoose } = require("mongoose");
 
-const postSchema = new Schema({
+const postSchema = new Schema(
+    {
     caption: { type: String, required: true },
     postImage: { type: String, required: true },
-    userId: { type: mongoose.Types.ObjectId, ref: "User" },
-    createdAt: { type: Date, required: true},
-    updatedAt: { type: Date, required: true},
-    timeStamps: true
-});
+    userId: { type: mongoose.Types.ObjectId, ref: "Users" },
+    },
+    {
+        timeStamps: true
+    }
+);
 
 const postModel = mongoose.model("Post", postSchema);
 

@@ -1,4 +1,4 @@
-const { Route } = require("express");
+const Route = require("express");
 const postModel = require("../models/postSchema");
 
 const postRoute = Route();
@@ -14,10 +14,14 @@ postRoute.post("/posts", async(req, res) => {
 
         await userModel.findByIdAndUpdate(userId, {
             $push: {
-                posts: createdPost._id
+                posts: createdPost.ObjectId(_id)
             },
         });
+
+        res.status(200).json(createdPost);
     } catch (error) {
-        throw new error(error);
+        res.status(500).json(error);
     }
 })
+
+module.exports = postRoute;
