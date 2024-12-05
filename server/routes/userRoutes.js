@@ -17,7 +17,7 @@ userRoute.post("/signup", async (req, res) => {
     };
 });
 
-userRoute.delete("/signup", async (req, res) => {
+userRoute.delete("/delete/user", async (req, res) => {
     const { username, password, email } = req.body;
     try {
         const user = await userModel.deleteOne({

@@ -14,14 +14,18 @@ postRoute.post("/posts", async(req, res) => {
 
         await userModel.findByIdAndUpdate(userId, {
             $push: {
-                posts: createdPost.ObjectId(_id)
+                userId: createdPost.ObjectId(_id)
             },
         });
-
         res.status(200).json(createdPost);
     } catch (error) {
         res.status(500).json(error);
     }
+})
+
+postRoute.get('/posts', async(req, res) => {
+    const response = await postModel.find().populate('userId')
+    res.json(response)
 })
 
 module.exports = postRoute;

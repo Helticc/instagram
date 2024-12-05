@@ -1,17 +1,22 @@
 const express = require('express');
-const app = express();
-app.use(express.json());
+const dotenv = require('dotenv')
+const cors = require('cors')
 const userRoute = require("../server/routes/userRoutes");
 const postRoute = require("../server/routes/postRoutes");
 const mongoose = require('mongoose');
+dotenv.config()
 
 const PORT = 3333;
+const app = express();
+app.use(cors())
+app.use(express.json());
 
 app.use(userRoute);
 app.use(postRoute);
+
 const connectToDB = () => {
     try {
-        mongoose.connect('mongodb+srv://Odser:7vEWl5s9WTAxBUqE@hop-1a.fghwt.mongodb.net/instagram?retryWrites=true&w=majority&appName=HOP-1A');
+        mongoose.connect(process.env.MONGO_DB_URI);
     } catch (error) {
         res.send(error, "this is not working");
     }
