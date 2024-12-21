@@ -1,6 +1,6 @@
 const Route = require("express");
 const postModel = require("../models/postSchema");
-
+const authMiddleware = require("../authmiddleware");
 const postRoute = Route();
 
 postRoute.post("/post/create", async(req, res) => {
@@ -17,25 +17,14 @@ postRoute.post("/post/create", async(req, res) => {
     };
 });
 
-postRoute.post("/post", async(req, res) => {
-    const authHeader = req.headers('authorization');
-    if(!authHeader) res.json({message: "no token in header"});
-    const token = authHeader.split(" ")[1];
-    console.log(token);
+postRoute.get("/posts", authMiddleware, async(req, res) => {
     try {
-        const createdPost = await postModel
-        .find()
-        .populate("userId", "username postImage");
+        const createdPost = await postModel.find().populate("userId", "username postImage");
         res.json(createdPost)
     } catch (error) {
         res.status(500).json(error);
     };
 });
-
-postRoute.get('/posts', async(req, res) => {
-    const response = await postModel.find().populate('userId', "postImage username caption")
-    res.json(response)
-})
 
 postRoute.delete('/delete/posts', async(req, res) => {
      const {caption, postImage, userId} = req.body;
