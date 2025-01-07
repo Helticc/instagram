@@ -1,8 +1,10 @@
 const Route = require("express");
 const userModel = require("../models/userSchema");
+const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken")
 const userRoute = Route();
+dotenv.config();
 
 userRoute.post("/signup", async (req, res) => {
     const {username, email, password} = req.body;
