@@ -2,7 +2,8 @@ const Route = require("express");
 const userModel = require("../models/userSchema");
 const dotenv = require("dotenv");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const authMiddleware = require("../authmiddleware");
 const userRoute = Route();
 dotenv.config();
 
@@ -28,17 +29,27 @@ userRoute.post("/signup", async (req, res) => {
 });
 
 userRoute.post("/login", async (req, res) => {
-    const { password, email } = req.body;
+    const { email, password } = req.body;
+    const user = await userModel.findOne({email});
+    if(!user) {
+        res.json({message: "email was unable to be found."})
+    }
     try {
-        const user = await userModel.create({
-            password,
-            email,
-        });
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(500).json(error); 
-    };
-});
+        const validPassword = await bcrypt.compare(password, user.password)
+        if(!validPassword) {
+            res.json({message: "password was incorrect"})
+        }else {
+            const token = jwt.sign({
+                userId: user.userId,
+                username: user.username,
+            }, process.env.JWT_SECRET, { expiresIn: "24h" });
+            res.send({token})
+        }
+    }catch (err) {
+        res.status(500).json({message: `unable to log in ${err}`})
+    }
+    
+})
 
 userRoute.delete("/delete/user", async (req, res) => {
     const { username, password, email } = req.body;
